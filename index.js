@@ -2,6 +2,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const uuid = require("uuid");
+const _ = require("underscore");
 
 
 // DATABASE
@@ -52,19 +53,37 @@ app.route("/products")
   });
 
 // third route
-app.get("/products/:id", (req, res) => {
-  for (let product of products) {
-    if (product.id == req.params.id) {
-      res.json(product);
-      break;
+app.route("/products/:id")
+  .get((req, res) => {
+    for (let product of products) {
+      if (product.id == req.params.id) {
+        res.json(product);
+        break;
+      }
     }
-  }
-  // Not found
-  res.status(404).send(`The product with id [${req.params.id}] does not exist`);
-});
+    // Not found
+    res.status(404).send(`The product with id [${req.params.id}] does not exist`);
+  })
+  .put((req, res) => {
+    let id = req.params.id;
+    let reemplazoProducto = req.body;
+
+    if (!reemplazoProducto || !reemplazoProducto.price || !reemplazoProducto.title) {
+      res.status(400).send("Tu producto debe especificar un titulo, precio y moneda.");
+      return
+    }
 
 
+    let indice = _.findIndex(products, product => product.id == id);
 
+    if (indice !== -1) {
+      reemplazoProducto.id = id;
+      products[indice] = reemplazoProducto;
+      res.status(200).json(reemplazoProducto);
+    } else {
+      res.status(400).send("El producto no existe.");
+    }
+  });
 
 
 
