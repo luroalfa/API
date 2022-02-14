@@ -3,7 +3,30 @@ const express = require("express");
 const _ = require("underscore");
 const products = require("./../../../database").products;
 const productsRouter = express.Router();
+const uuid = require("uuid");
+const Joi = require("joi");
 
+
+//Usando Joi 
+
+const blueprintProducto = Joi.object().keys({
+  title: Joi.string().max(100).required(),
+  price: Joi.number().positive().precision(2).required,
+  coin: Joi.string().length(3).uppercase(),
+
+});
+
+// middleware
+const validateProduct = (req, res, next) => {
+  let result = Joi.ValidationError(nuevoProducto, blueprintProducto, { abortEarly: false, convert: false });
+  console.log(result);
+  if (result.error === null) {
+    next();
+    return
+  } else {
+    res.status(400).send("...Error en validar producto");
+  }
+};
 
 
 // ******************** Route of the GET and POST method from the root ********************
@@ -13,6 +36,10 @@ productsRouter.get("/", (req, res) => {
 
 productsRouter.post("/", (req, res) => {//*Post, is used for create new products
   let nuevoProducto = req.body;
+
+
+
+
   if (!nuevoProducto || !nuevoProducto.price || !nuevoProducto.title) {
     res.status(400).send("Tu producto debe especificar un titulo, precio y moneda.");
     return
