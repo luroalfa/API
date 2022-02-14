@@ -81,10 +81,20 @@ app.route("/products/:id")
       products[indice] = reemplazoProducto;
       res.status(200).json(reemplazoProducto);
     } else {
-      res.status(400).send("El producto no existe.");
+      res.status(404).send("El producto no existe.");
     }
-  });
+  })
+  .delete((req, res) => {
+    let indiceABorrar = _.findIndex(products, product => product.id == req.params.id);
+    if (indiceABorrar === -1) {
+      res.status(404).send(`The product with id: [${req.params.id}] don't exist`);
+      return
+    }
 
+    let borrado = products.splice(indiceABorrar, 1);
+    res.json(borrado);
+
+  });
 
 
 
