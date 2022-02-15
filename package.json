@@ -9,6 +9,7 @@
   "author": "Rodriguez Fallas Luis",
   "license": "ISC",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "body-parser": "^1.19.1",
     "express": "^4.17.2",
     "joi": "^17.6.0",
